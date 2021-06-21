@@ -30,7 +30,7 @@ jobs:
       - name: Workflow validation
         if: |
           steps.set_env_development.outputs.executed == false &&
-          steps.set_env_release-candidate.outputs.executed == false &&
+          steps.set_env_release-candidate.outputs.executed == false
         uses: actions/github-script@v3
         with:
           script: |
