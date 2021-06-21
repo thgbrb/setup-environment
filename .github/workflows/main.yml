@@ -22,7 +22,7 @@ jobs:
         id: set_env_release-candidate
         if: |
           github.ref == 'refs/heads/release-candidate'
-        uses: ./.github/actions/setup-environment
+        uses: thgbrb/setup-environment@main
         with:
           environment-config-file: "setup_qa.env"
           section-name: "API_LOREM_IPSUM"
