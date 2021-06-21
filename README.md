@@ -35,4 +35,4 @@ Once an env file is created, action are ready to use it.
 # In this example, all key from default section and
 # grouped into section named API_LOREM_IPSUM will be loaded to environment variables.
 ```
-For more informations how to use [have a look in this repo workflow](.github/workflow/main.yml)
+For more informations how to use [have a look in this repo workflow](.github/workflows/main.yml)
