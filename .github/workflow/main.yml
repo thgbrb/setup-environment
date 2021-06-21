@@ -1,0 +1,49 @@
+name: setup-environment example
+on:
+  push:
+jobs:
+  Example:
+    name: Run example
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Load development vars
+        id: set_env_development
+        if: |
+          github.ref == 'refs/heads/development'
+        uses: ./.github/actions/setup-environment
+        with:
+          environment-config-file: "setup_dev.env"
+          section-name: "API_LOREM_IPSUM"
+
+      - name: Load release-candidate vars
+        id: set_env_release-candidate
+        if: |
+          github.ref == 'refs/heads/release-candidate'
+        uses: ./.github/actions/setup-environment
+        with:
+          environment-config-file: "setup_qa.env"
+          section-name: "API_LOREM_IPSUM"
+
+      - name: Workflow validation
+        if: |
+          steps.set_env_development.outputs.executed == false &&
+          steps.set_env_release-candidate.outputs.executed == false &&
+        uses: actions/github-script@v3
+        with:
+          script: |
+            core.setFailed('Workflow was trigger sucesslly but non env files was loaded.')
+
+      - name: Using setup-environment and microsoft;variable-substitution toghether we can do nice things :)
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: '**/appsettings.json'
+        env:
+          ConnectionStrings.Database: ${{ secrets.LOAD_CONNECTIONSTRING_FROM_GITHUB_SECRETS }}
+
+      - name: Dump appsettings.json
+        run: |
+          cat ${{ github.workspace }}/appsettings.json
+        shell: bash

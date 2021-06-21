@@ -1,0 +1,38 @@
+name: 'setup-environment'
+author: 'Thiago Borba @thgbrb'
+description: 'Reads an structured env file and set environment variables into action context.'
+inputs:
+  environment-config-file:
+    description: 'Name of env file'
+    required: true
+    default: 'none'
+  section-name:
+    description: 'Select a section to load values'
+    required: false
+outputs:
+  executed:
+    description: 'Flag action as executed'
+    value: ${{ steps.set-flag.outputs.flag_value }}
+runs:
+  using: "composite"
+  steps:
+    - run: |
+        do_load=true
+        while IFS='= ' read key value
+        do
+          if [[ $key == \[*] ]]
+          then
+            name=$(echo $key | tr -d [])
+            [[ "${{ inputs.section-name }}" == "$name" ]] && do_load=true || do_load=false
+          elif [[ $value ]] && $do_load
+          then
+            echo "$key=$value" >> $GITHUB_ENV
+          fi
+        done < ${{ inputs.environment-config-file }}
+      shell: bash
+    - id: set-flag
+      run: echo "::set-output name=flag_value::$(echo true)"
+      shell: bash
+branding:
+  icon: terminal
+  color: purple
