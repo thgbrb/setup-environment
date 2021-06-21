@@ -1,6 +1,7 @@
 name: setup-environment example
 on:
   push:
+    branches: [ development, release-candidate ]
 jobs:
   Example:
     name: Run example
